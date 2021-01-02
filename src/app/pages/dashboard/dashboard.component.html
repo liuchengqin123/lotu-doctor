@@ -1,0 +1,39 @@
+<div class="dashboard-wrap">
+  <div class="dashboard">
+    <div class="actions-bar">
+      <div class="actions">
+        <button mat-raised-button color="primary" (click)="openAddMinerDialog()">Add Miner</button>
+      </div>
+      <div class="filters">
+        <!-- TODO -->
+      </div>
+    </div>
+    <div class="miner-list mat-elevation-z4">
+      <h2 class="mat-h2 mat-title">Miner List</h2>
+      <mat-divider></mat-divider>
+      <mat-list>
+        <mat-list-item *ngFor="let miner of miners">
+          <div matLine>
+            <a [routerLink]="['/miners', miner.id, 'sector', 'list']">{{miner.name}}</a>
+          </div>
+          <div matLine>{{miner.endpoint}}</div>
+          <div class="space"></div>
+          <!-- TODO -->
+          <div class="actions">
+            <button mat-flat-button color="warn" (click)="onDeleteMiner($event, miner.id)">Delete</button>
+          </div>
+          <mat-divider></mat-divider>
+        </mat-list-item>
+      </mat-list>
+    </div>
+  </div>
+</div>
+
+<ng-template #deleteMinerTip>
+  <mat-dialog-content>Delete this miner?</mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close="">Cancel</button>
+    <button mat-button color="primary" [mat-dialog-close]="true">Delete</button>
+  </mat-dialog-actions>
+</ng-template>
+

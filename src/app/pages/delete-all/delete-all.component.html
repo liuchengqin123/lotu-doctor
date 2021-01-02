@@ -1,0 +1,17 @@
+<div class="delete-all">
+  <div class="delete-all-wrapper">
+    <div class="delete-all-top"><h3>确定批量删除这些扇区吗？</h3></div>
+    <div class="delete-all-body">
+      <div class="delete-all-items" *ngIf="data">
+        <div class="delete-item" *ngFor="let d of data">
+          <p>{{d.sectorId}}</p>
+        </div>
+      </div>
+    </div>
+    <div class="action-button-package">
+      <div class="action-button"><button mat-raised-button style="border: 1px solid #53caff" (click)="close()">取消</button></div>
+      <div class="action-button"><button mat-raised-button color="warn" (click)="confirm()">确定</button></div>
+    </div>
+  </div>
+</div>
+

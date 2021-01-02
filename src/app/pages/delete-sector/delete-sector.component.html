@@ -1,0 +1,13 @@
+<div class="delete-window">
+  <div class="card-content">
+    <p>确定删除{{data.sectorId}}号扇区吗？</p>
+  </div>
+  <div class="card-actions">
+    <div class="card-button">
+      <button  mat-raised-button style="border: 1px solid #53caff" (click)="cancel(); $event.stopPropagation()">取消</button>
+    </div>
+    <div class="card-button">
+      <button  mat-raised-button color="warn" (click)="confirmed(); $event.stopPropagation()">确定</button>
+    </div>
+  </div>
+</div>

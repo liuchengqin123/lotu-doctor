@@ -1,0 +1,389 @@
+syntax = "proto3";
+
+package lotuspb;
+
+import "gogoproto/gogo.proto"; // in github.com/gogo/protobuf
+import "google/protobuf/empty.proto"; // in github.com/gogo/protobuf/protobuf
+import "validate/validate.proto";
+
+option (gogoproto.sizer_all) = true;
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+
+service LotusService {
+  rpc UnaryRPC (Request) returns (Response) {}
+  rpc ServerStreamingRPC (Request) returns (stream Response) {}
+  rpc ClientStreamingRPC (stream Request) returns (Response) {}
+  rpc BidirectionalStreamingRPC (stream Request) returns (stream Response) {}
+
+  rpc PledgeGarbage(PledgeGarbageRequest) returns (google.protobuf.Empty) {}
+
+  rpc MpoolPushMessageSign (stream MpoolPushMessageSignRequest) returns (stream MpoolPushMessageSignResponse) {}
+
+  rpc WorkerState (Worker) returns (WorkerStateResponse) {}
+  rpc WorkerAddPiece (stream AddPieceResult) returns (stream AddPiece) {}
+  rpc WorkerReadPiece (stream PiecePart) returns (stream PiecePartRequest) {}
+  rpc WorkerFetchTask (stream TaskReceipt) returns (stream Task) {}
+  rpc WorkerFinishTask (TaskResult) returns (google.protobuf.Empty) {}
+  rpc WorkerReadSector (stream SectorPart) returns (stream SectorPartRequest) {}
+
+  rpc WalletBalance (WalletBalanceRequest) returns (WalletBalanceResponse) {}
+  rpc MinerPower (MinerPowerRequest) returns (MinerPowerResponse) {}
+  rpc MinerSectorCount (MinerSectorCountRequest) returns (MinerSectorCountResponse) {}
+  rpc MinerWorkers (MinerWorkersRequest) returns (MinerWorkersResponse) {}
+  rpc MinerWindowPoSt (MinerWindowPoStRequest) returns (MinerWindowPoStResponse) {}
+  rpc MinerInfo (google.protobuf.Empty) returns (MinerInfoResponse) {}
+
+  rpc MinerInfoDetailed (google.protobuf.Empty) returns (MinerInfoDetailedResponse) {}
+
+  rpc SectorLegalStates (google.protobuf.Empty) returns (SectorLegalStatesResponse) {}
+  rpc SectorStatus (SectorRequest) returns (Sector) {}
+  rpc SectorList (SectorListRequest) returns (SectorListResponse) {}
+  rpc SectorRemove (SectorRemoveRequest) returns (SectorBatchResponse) {}
+  rpc SectorUpdate (SectorUpdateRequest) returns (SectorBatchResponse) {}
+  rpc SectorLog (SectorRequest) returns (SectorLogResponse) {}
+  rpc SectorWorker (SectorRequest) returns (Worker) {}
+}
+
+message Request {
+  bytes request = 1;
+}
+
+message Response {
+  bytes response = 1;
+}
+
+message PledgeGarbageRequest {
+  bool auto = 1; // Auto or manual.
+  bool autoEnable = 2; // If auto, whether enable it.
+  int32 expiration_days = 3;
+  bool use_existing = 4; // Whether use existing pre-generated sector.
+}
+
+message MpoolPushMessageSignRequest {
+  bytes message = 1;
+  bytes signed_message = 2;
+}
+message MpoolPushMessageSignResponse {
+  uint64 nonce = 1;
+  bytes signed_message = 2;
+}
+
+message PieceInfo {
+  uint64 size = 1;
+  bytes piece_cid = 2;
+}
+
+enum SectorFileType {
+  FTUnsealed = 0;
+  FTSealed = 1;
+  FTCache = 2;
+}
+
+message Statz {
+  message Concurrency {
+    int32 limit = 1;
+    int32 current = 2;
+  }
+
+  bool multi_threaded_current = 1;
+  int32 gpu_used_num_current = 2;
+  int32 gpu_total_num = 3;
+  int32 gpu_p2_multiplier = 4;
+  Concurrency add_piece = 5;
+  Concurrency pre_commit1 = 6;
+  Concurrency pre_commit2 = 7;
+  Concurrency commit1 = 8;
+  Concurrency commit2 = 9;
+}
+
+message Worker {
+  string id = 1;
+  repeated string addrs = 2;
+  string hostname = 3;
+  bool allow_deal_sector = 4;
+  Statz statz = 5;
+  message Sector {
+    uint64 miner_id = 1;
+    uint64 sector_id = 2;
+    map<int32, bool> has_file = 3;
+    uint64 sector_size = 4;
+    bool finished = 5;
+    bool healthy = 6;
+    string reason = 7;
+  }
+  repeated Sector sectors = 6;
+  message Task {
+    TaskType type = 1;
+    uint64 sector_id = 2;
+    uint64 sector_state_id = 3;
+  }
+  repeated Task tasks = 7;
+  int64 updated_at = 8;
+}
+
+message WorkerStateResponse {
+  message Sector {
+    uint64 miner_id = 1;
+    uint64 sector_id = 2;
+    bool finished = 3;
+    bool deleted = 4;
+    repeated SectorRange keep_unsealed = 5; // for finished
+  }
+  repeated Sector sectors = 5;
+}
+
+message AddPiece{
+  uint64 id = 1;
+  uint64 piece_id = 2; // Piece id, for the same piece.
+  uint64 miner_id = 3;
+  uint64 sector_id = 4;
+  repeated uint64 existing_piece_sizes = 5;
+  uint64 piece_size = 6;
+  bytes bytes = 7; // Piece bytes. Can be large enough, e.g., 256MiB.
+}
+message AddPieceResult {
+  uint64 id = 1;
+  uint64 piece_id = 2; // Piece id, for the same piece.
+  PieceInfo piece = 3;
+  string error = 4;
+  Worker worker = 5;
+}
+
+message PiecePartRequest {
+  uint64 id = 1;
+  uint64 piece_id = 2; // Piece id, for the same piece.
+  uint64 sector_id = 3;
+  uint64 offset = 4;
+  uint64 size = 5;
+  bytes ticket = 6;
+  bytes unsealed_cid = 7;
+  int32 len = 8; // Bytes length to read this time.
+}
+message PiecePart {
+  uint64 id = 1;
+  uint64 piece_id = 2; // Piece id, for the same piece.
+  bytes bytes = 3;
+  string error = 4;
+}
+
+enum TaskType {
+  Unspecified = 0;
+  NewSector = 1;
+  PreCommit1 = 2;
+  PreCommit2 = 3;
+  Commit1 = 4;
+  Commit2 = 5;
+  Finalize = 6;
+}
+
+message SectorCids {
+  bytes unsealed = 1;
+  bytes sealed = 2;
+}
+
+message SectorRange {
+  uint64 offset = 1;
+  uint64 size = 2;
+}
+
+message Task {
+  uint64 id = 1;
+  TaskType type = 2;
+
+  uint64 miner_id = 3;
+  uint64 sector_id = 4;
+  uint64 sector_state_id = 5;
+
+  bytes ticket = 6; // for PreCommit1/Commit1
+  repeated PieceInfo pieces = 7; // for PreCommit1/Commit1
+  bytes pre_commit1_out = 8; // for PreCommit2
+  bytes seed = 9; // for Commit1
+  SectorCids sector_cids = 10; // for Commit1
+  bytes commit1_out = 11; // for Commit2
+  repeated SectorRange keep_unsealed = 12; // for Finalize
+}
+message TaskReceipt {
+  uint64 id = 1;
+  bool accepted = 2;
+  bool busy = 3;
+  Worker worker = 4;
+}
+
+message TaskResult {
+  TaskType type = 1;
+
+  uint64 miner_id = 2;
+  uint64 sector_id = 3;
+  uint64 sector_state_id = 4;
+
+  bytes pre_commit1_out = 5; // for PreCommit1
+  SectorCids sector_cids = 6; // for PreCommit2
+  bytes commit1_out = 7; // for Commit1
+  bytes proof = 8; // for Commit2
+
+  string error = 9;
+
+  Worker worker = 10;
+}
+
+message FinishedTask {
+  Task task = 1;
+  TaskResult result = 2;
+}
+
+message SectorPartRequest {
+  uint64 id = 1;
+  string miner = 2;
+  uint64 sector_id = 3;
+  string cache_id = 4; // If empty, access sealed data; else access cache data with this suffix id.
+  uint64 offset = 5;
+  uint64 size = 6;
+
+  message Sector {
+    uint64 sector_id = 1;
+    uint64 j = 2;
+    uint64 i = 3;
+  }
+  repeated Sector sectors = 7;
+  uint64 numSectorsPerChunk = 8;
+  string randomness = 9;
+  bool isWinningPoSt = 10;
+  int64 seal_proof = 11;
+}
+message SectorPart {
+  uint64 id = 1;
+  bytes bytes = 2;
+  string error = 3;
+}
+
+message WalletBalanceRequest {
+  string addr = 1;
+}
+
+message WalletBalanceResponse {
+  //because protobuf doesn't support big integer
+  string balance = 1;
+}
+
+message MinerPowerRequest {
+  string miner_id = 1;
+}
+
+message MinerPowerResponse {
+  string power = 1;
+}
+
+message MinerSectorCountRequest {
+  string miner_id = 1;
+}
+
+message MinerSectorCountResponse {
+  uint64 sector_count = 1;
+  uint64 proving_count = 2;
+}
+
+message MinerWorkersRequest {
+}
+
+message MinerWorkersResponse {
+  repeated Worker workers = 1;
+}
+
+message MinerWindowPoStRequest {
+  int32 deadline_index = 1;
+}
+
+message MinerWindowPoStResponse {
+}
+
+message MinerInfoResponse {
+  int64 seal_proof_type = 1;
+}
+
+message MinerInfoDetailedResponse {
+  // basic info
+  string miner_id = 1; // 矿工号
+  string sector_size = 2; // 扇区大小
+
+  // power info
+  string qa_power = 3; // 有效算力
+  string win_speed = 4; // 预期出块速率
+
+  // deal info
+  uint64 deal_num = 5; // 交易数量
+  string deal_size = 6; // 交易大小
+  uint64 active_deal_num = 7; // 有效交易数量
+  string active_deal_size = 8; // 有效交易大小
+  uint64 verified_deal_num = 9; // 已验证交易数量
+  string verified_deal_size = 10; // 已验证交易大小
+
+  // balance info
+  string balance = 11; // 矿工余额
+  string pre_commit = 12; // 矿工PreCommit
+  string pledge = 13; // 矿工扇区质押
+  string vesting = 14; // 矿工奖励锁仓
+  string debt = 15; // 矿工负债
+  string available = 16; // 矿工可用余额
+
+  string market_balance = 17; // 市场余额
+  string market_locked = 18; // 市场锁定余额
+  string market_available = 19; // 市场可用余额
+
+  string worker_balance = 20; // 工作账户余额
+  string control_balance = 21; // 控制账户余额
+
+  string total_balance = 22; // 总计余额
+  string total_locked = 23; // 总计锁定余额
+  string total_spendable = 24; // 总计可用余额
+
+  // on-chain sector info
+  uint64 onchain_sector_live = 25;  // 全部
+  uint64 onchain_sector_active = 26;  // 有效
+  uint64 onchain_sector_faulty = 27;  // 错误
+
+  // local sector info
+  map<string, uint64> local_sectors = 28;
+}
+
+message SectorLegalStatesResponse {
+  repeated string states = 1;
+}
+
+message SectorRequest {
+  uint64 sector_id = 1;
+}
+
+message Sector {
+  uint64 sector_id = 1;
+  string state = 2;
+}
+
+message SectorListRequest {
+  repeated uint64 id_filter = 1;
+  repeated string state_filter = 2;
+  uint32 page_size = 3 [(validate.rules).uint32 = {in: [10,20,50,100]}];
+  uint32 page = 4;
+}
+
+message SectorListResponse {
+  uint32 total = 1;
+  repeated Sector sectors = 2;
+}
+
+message SectorRemoveRequest {
+  repeated uint64 sector_ids = 1;
+}
+
+message SectorUpdateRequest {
+  repeated uint64 sector_ids = 1;
+  string new_state = 2;
+}
+
+message SectorBatchResponse {
+  map<uint64, string> failed = 1;
+}
+
+message SectorLogResponse {
+  string log = 1;
+}

@@ -1,0 +1,25 @@
+.ld-main-layout
+  height: 100%
+  //display: flex
+  //flex-direction: column
+  .ld-main-layout-header
+    position: relative
+    z-index: 1000
+    .brand
+      display: flex
+      align-items: center
+      text-decoration: none
+
+      &:visited
+        color: inherit
+
+      // TODO: replace with logo
+      .mat-icon
+        margin-right: 12px
+  .ld-main-layout-container
+    //flex: 1 1 100%
+    min-height: calc(100% - 64px)
+    .ld-main-layout-sidenav
+      width: 240px // TODO
+    .ld-main-layout-content
+      padding: 24px

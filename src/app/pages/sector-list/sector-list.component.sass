@@ -1,0 +1,297 @@
+.sector-wrap
+  top: -20px
+  margin: auto
+  height: 100%
+
+  .sector-decoration
+    margin: auto
+    max-width: 1024px
+    min-width: 760px
+    padding-bottom: 80px
+
+  // title 设置
+  .sector-title-wrap, .miner-title-wrap
+    position: relative
+    top: 20px
+    margin: auto
+    width: 300px
+
+  .sector-title-top, .miner-title-top
+    width: 200px
+    height: 100%
+    margin: auto
+    h2
+      text-align: center
+
+
+  .miner-information
+    position: relative
+    .account
+      .miner-detail
+        width: 500px
+        font-size: 14px
+        border-collapse: collapse
+        border: 1px solid #d9d9d9
+        td, th
+          border: 1px solid #d9d9d9
+          padding: 4px
+
+    .miner-information-title
+      padding-bottom: 8px
+      padding-left: 16px
+      display: flex
+      .miner-information-title-item
+         margin-left: 60px
+    .all-power
+      border: 1px solid #d9d9d9
+      line-height: 0.8em
+      font-size: 14px
+      margin-right: 6px
+      height: 249px
+      .power
+        padding-top: 8px
+        .power-item
+          line-height: inherit
+          padding: 10px 12px
+    .balance-item
+      width: 200px
+    .refresh
+      display: flex
+      flex-direction: row-reverse
+      margin-top: 8px
+      margin-right: 20px
+      margin-bottom: 8px
+
+  // filter 设置
+  .filter-package
+    position: relative
+    top: 80px
+    padding-bottom: 60px
+
+    // sector id
+    .selected-sector-by-id
+      width: 100%
+      padding-top: 8px
+      padding-bottom: 60px
+      .selected-sector-id-wrapper
+        width: 300px
+        height: 113px
+        margin: auto
+        .id-input
+          margin-top: 40px
+      .id-filter
+        position: absolute
+        bottom: 0
+        right: 15px
+        .footer-button
+          padding-top: 8px
+    .filter
+      padding-top: 8px
+      padding-bottom: 60px
+
+      .filter-top
+        display: flex
+        font-size: 14px
+        padding: 8px 10px
+
+        .selected-all-states
+          margin-right: 18px
+          .failed-state, .failed-state-active
+            position: absolute
+            display: inline-block
+            cursor: pointer
+            top: 20px
+          .failed-state
+            width: 16px
+            height: 16px
+            border: 2px solid #777
+          .failed-state-active
+            width: 16px
+            height: 16px
+            background-color: rgb(255, 64, 129)
+            background-image: url('../../../assets/images/ok.svg')
+
+        .show-selected-filter
+          position: absolute
+          right: 38px
+
+      .filter-wrap
+        display: flex
+        display: -webkit-flex
+        flex-wrap: wrap
+        justify-content: flex-start
+        overflow: hidden
+
+      .filter-item
+        font-size: 12px
+        line-height: 0.8
+        flex: 1 1 auto
+        margin: 2px 6px
+
+      .state
+        .state-filter
+          margin-left: 15px
+
+  .filter-footer
+    position: absolute
+    right: 15px
+    padding: 12px
+
+  // table
+  .mat-elevation-z4, .sector-table-package
+    position: relative
+    top: 26px
+    margin-bottom: 38px
+    padding-top: 10px
+    padding-bottom: 10px
+
+    .sector-table
+      position: relative
+      min-height: 500px
+      height: 100%
+      width: 100%
+
+      table
+        width: 100%
+        .th-wrap,.td-wrap
+          position: relative
+          width: 26%
+          text-align: left
+          font-size: 14px
+          padding-left: 12px
+
+        .element-row:hover
+          background: #f5f5f5
+
+        .element-row:active
+          background: #efefef
+
+        .element-row:visited
+          background-color: #cdcdcd
+          border: 1px solid #eeeeee
+
+        .element-row td
+          border-bottom-width: 0
+
+    // 操作设置
+    .operate
+      width: 420px
+      .operate-item
+        float: left
+        margin: 0 8px
+
+    .element-detail
+      position: relative
+      overflow: hidden
+      .status-history
+        padding-top: 12px
+        height: 36px
+        margin-bottom: 8px
+      .expanded-spinner
+        position: absolute
+        width: 60px
+        height: 60px
+        left: 50%
+        top: 50%
+        transform: translate(-50%, -50%)
+
+      .element-description
+        //position: relative
+        //top: 6px
+        padding: 16px
+        margin-bottom: 18px
+        font-size: 16px
+        white-space: pre-wrap
+        overflow: auto
+        height: 400px
+
+      .expanded-icon
+        width: 42px
+        margin: auto
+
+
+    .element-worker-detail
+      position: relative
+      width: 74%
+      padding: 10px 8px
+      margin: auto
+      font-size: 14px
+
+      .sector-list, .worker-addr, .worker-id, .worker-host-name
+        margin-top: 12px
+        width: 308px
+      .sector-list
+        position: absolute
+        right: 20px
+        top: 10px
+      .details
+        border: 1px solid #d9d9d9
+        //border-collapse: collapse
+        td
+          border: 1px solid #d9d9d9
+          text-align: center
+      .addr-detail
+        margin: inherit
+        text-indent:  16px
+    .error
+      height: 80px
+      .error-detail
+        position: absolute
+        top: 0
+        left: 0
+        right: 0
+        bottom: 0
+        height: 38px
+        width: 300px
+        margin: auto
+        color: #B82A1E
+    .detail-row
+      height: 0
+
+  //  spinner 设置
+  .sector-table-wrap
+    .spinner-wrap, .sector-empty
+      position: absolute
+      top: 50%
+      left: 50%
+      transform: translate(-50%, -50%)
+
+// 返回顶部按钮
+.back-top
+  position: fixed
+  bottom: 80px
+  right: 40px
+
+// 底部窗口显示已选sector信息
+.selected-sector
+  position: fixed
+  left: 0
+  bottom: 0
+  width: 100%
+  background-color: #53caff
+  .spacer
+    flex: 1 1 auto
+  .selected-sector-number
+    margin-right: 18px
+  button
+    margin-right: 12px
+
+// 已读样式
+.active
+  background-color: #b8b8b8
+
+// 分页器
+.table-paginator
+  display: flex
+  justify-content: flex-end
+  align-items: center
+  background-color: #fff
+
+  .table-paginator-page-index-label
+    margin: 0 4px
+    font-size: 12px
+    color: rgba(0, 0, 0, .54)
+
+  .table-paginator-page-index-input
+    margin: 6px 4px 0 4px
+    width: 56px

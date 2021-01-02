@@ -1,0 +1,65 @@
+<h1 mat-dialog-title>Add Miner</h1>
+<div mat-dialog-content>
+  <form [formGroup]="addMinerForm">
+    <div class="form-field-wrapper">
+      <mat-form-field class="form-field-name" appearance="fill">
+        <mat-label>Name</mat-label>
+        <input matInput [formControl]="nameControl" placeholder="Miner Name" />
+        <mat-error *ngIf="nameControl.invalid && (nameControl.dirty || nameControl.touched)">
+          <div *ngIf="nameControl.errors?.required">You must enter a value</div>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="form-field-label" appearance="fill">
+        <mat-label>Label</mat-label>
+        <mat-select [formControl]="labelControl">
+          <mat-option value="important">Important</mat-option>
+          <mat-option value="secondary">Secondary</mat-option>
+        </mat-select>
+        <mat-error *ngIf="labelControl.invalid && (labelControl.dirty || labelControl.touched)">
+          <div *ngIf="labelControl.errors?.required">You must choose one</div>
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div class="form-field-wrapper">
+      <mat-form-field class="form-field-remark" appearance="fill">
+        <mat-label>Remark</mat-label>
+        <textarea
+          matInput
+          [matTextareaAutosize]="true"
+          [matAutosizeMinRows]="1"
+          [matAutosizeMaxRows]="4"
+        ></textarea>
+      </mat-form-field>
+    </div>
+    <div class="form-field-wrapper">
+      <mat-form-field class="form-field-protocol" appearance="fill">
+        <mat-label>Protocol</mat-label>
+        <mat-select [formControl]="protocolControl">
+          <mat-option value="http">HTTP</mat-option>
+          <mat-option value="https">HTTPS</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="form-field-address" appearance="fill">
+        <mat-label>Address</mat-label>
+        <input matInput [formControl]="addressControl" placeholder="127.0.0.1" />
+        <mat-error *ngIf="addressControl.invalid && (addressControl.dirty || addressControl.touched)">
+          <div *ngIf="addressControl.errors?.required">You must enter a value</div>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="form-field-port" appearance="fill">
+        <mat-label>Port</mat-label>
+        <input matInput type="number" [formControl]="portControl" placeholder="2344" />
+        <mat-error *ngIf="portControl.invalid && (portControl.dirty || portControl.touched)">
+          <div *ngIf="portControl.errors?.required">You must enter a value</div>
+          <div *ngIf="portControl.errors?.min || portControl.errors?.max">
+            The port number must be between 1024 and 65535
+          </div>
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()">Create</button>
+</div>

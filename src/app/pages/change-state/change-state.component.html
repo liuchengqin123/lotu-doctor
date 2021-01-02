@@ -1,0 +1,28 @@
+<div class="change-state">
+  <div class="change-state-wrap">
+    <div class="state-wrap">
+      <h2>状态变更</h2>
+      <mat-list class="mat-list">
+        <mat-list-item *ngIf="data"><span class="sector-info">sector id: </span>{{data.sectorId}}</mat-list-item>
+        <mat-list-item *ngIf="oldState"><span class="sector-info">sector state: </span>{{oldState}}</mat-list-item>
+      </mat-list>
+      <mat-form-field class="mat-form-field" >
+        <mat-label>变更状态到</mat-label>
+        <mat-select class="mat-select" [(value)]="selectedState" [formControl]="stateControl" required>
+          <mat-option class="mat-option" *ngFor="let state of stateFilter" [value]="state">
+            {{state}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="stateControl.hasError('required')">请选择一个状态值</mat-error>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="button-action">
+    <div class="button-item" >
+      <button mat-raised-button style="border: 1px solid #53caff" (click)="close()">取消</button>
+    </div>
+    <div class="button-item">
+      <button mat-raised-button color="warn" (click)="confirm()">确认变更</button>
+    </div>
+  </div>
+</div>

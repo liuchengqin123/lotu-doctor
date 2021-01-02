@@ -1,0 +1,30 @@
+<div class="change-all">
+  <div class="change-all-wrapper">
+    <div class="change-all-top">
+      <h4>所需更改的所有初始状态: </h4>
+      <div class="origin-state" *ngFor="let s of data">
+       <h4 *ngIf="data">{{s}}</h4>
+      </div>
+    </div>
+    <div class="change-all-body">
+      <mat-form-field class="mat-form-field" >
+        <mat-label>变更状态到</mat-label>
+        <mat-select class="mat-select" [(value)]="selectedState" [formControl]="stateControl" required>
+          <mat-option class="mat-option" *ngFor="let state of stateFilter" [value]="state">
+            {{state}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="stateControl.hasError('required')">前选择一个状态值</mat-error>
+      </mat-form-field>
+    </div>
+    <div class="change-footer">
+      <div class="change-footer-button">
+        <button mat-raised-button style="border: 1px solid #53caff" (click)="close()">取消</button>
+      </div>
+      <div class="change-footer-button">
+        <button mat-raised-button color="primary" (click)="confirm()">确认变更</button>
+      </div>
+    </div>
+  </div>
+</div>
+
